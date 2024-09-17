@@ -3,48 +3,39 @@
 Option Explicit
 
 Sub Main
-Dim N,i,j As Integer
-Dim lambda, L0, L, W0, W, D0, D, R, m, X0, Y0 As Double
-'определение переменных'
-N=10 'задается количество рядов излучателей'
-lambda=9 'задается длина волны в диэлектрике'
-L0=0.55 'длина излучающего элемента в долях длины волны'
-L=L0*lambda 'вычисляется длина элемента в мм'
-W0=0.4 'ширина элемента в долях длины волны'
-W=W0*lambda 'вычисляется ширина элемента в мм'
-D0=0.5 'поперечное расстояние между элементами в долях длины волны'
-D= D0*lambda 'поперечное расстояние между элементами в мм'
+	Dim N_cyl As Integer
+	Dim R,h,width As Boolean
 
-For i=0 To N-1 'при прохождении этого цикла один раз, строится один ряд
-R=10+i*lambda 'радиус окружности, на которой строятся вибраторы'
-m=-2+R/(2^0.5) 'предел количества вибраторов на окружности'
-For j=0 To m/D 'в этом цикле строится левая половина вибраторов'
-X0=j*D 'определяется координата x центра элемента'
- Y0=Sqr(R^2-X0^2) 'вычисляется координата y центра эл-та'
-With Brick 'подпрограмма построения элемента'
- .Reset
- .Name "в"+"_"+CStr(j)+"__"+CStr(i)
- .Component "вибраторы1"
- .Material "material1"
- .Xrange X0-W/2, X0+W/2
- .Yrange Y0-L/2, Y0+L/2
- .Zrange 4, 7
- .Create
-End With
-Next j
-For j=1 To m/D 'в этом цикле строится правая половина вибраторов'
-X0=j*D
- Y0=Sqr(R^2-X0^2)
-With Brick
- .Reset
- .Name "в"+" "+CStr(j)+" "+CStr(i)
- .Component "вибраторы2"
- .Material "material1"
- .Xrange -X0-W/2, -X0+W/2
- .Yrange Y0-L/2, Y0+L/2
- .Zrange 4, 7
- .Create
-End With
-Next j
-Next i
+N_cyl = 20
+R = 9
+h = 3
+width = 6
+
+StoreParameter("N_cyl",N_cyl)
+StoreParameter("width",width)
+StoreParameter("R",R)
+'StoreParameter("R_in",R_in)
+StoreParameter("h",h)
+
+Dim a As Integer
+For a=1 To N_cyl
+	With Cylinder
+     .Reset
+     .Name Cstr(a)
+     .Component "component1"
+     .Material "material1"
+     .OuterRadius R*a+3
+     .InnerRadius R*a-3
+     .Axis "z"
+     .Zrange "0", "h"
+     .Xcenter "-0"
+     .Ycenter "-0"
+     .Segments "0"
+     .Create
+	End With
+Next
+
+
 End Sub
+
+
